@@ -1,0 +1,47 @@
+﻿version: "3.9"
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: TouristRoutes/Dockerfile
+    container_name: tourist_api
+    ports:
+      - "5054:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Username=postgres;Password=rk091011;Database=asp_net_pois_db;Pooling=true;"
+      Redis__ConnectionString: "redis:6379"
+      
+      Email__Host: "sandbox.smtp.mailtrap.io"
+      Email__Port: "2525"
+      Email__User: "b0cf6dba4f989c"
+      Email__Password: "18731d67150c1b"
+      Email__From: "no-reply@touristapp.local"
+      
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    container_name: tourist_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tourist
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: tourist_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

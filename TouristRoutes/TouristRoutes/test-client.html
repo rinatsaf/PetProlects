@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TouristRoutes Test Client</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 16px; line-height: 1.4; }
+    fieldset { margin-bottom: 16px; }
+    label { display: block; margin-top: 6px; }
+    input, select, textarea { width: 100%; max-width: 420px; }
+    button { margin-top: 8px; }
+    pre { background: #f4f4f4; padding: 8px; overflow: auto; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .half { flex: 1 1 320px; }
+  </style>
+</head>
+<body>
+  <h2>TouristRoutes Test Client</h2>
+  <div class="row">
+    <div class="half">
+      <label>
+        API Base URL
+        <input id="baseUrl" value="http://localhost:5054" />
+      </label>
+    </div>
+    <div class="half">
+      <label>
+        Auth Cookie Domain (optional for sandbox tests)
+        <input id="cookieDomain" placeholder="example.com" />
+      </label>
+    </div>
+  </div>
+
+  <fieldset>
+    <legend>Auth</legend>
+    <label>Email <input id="regEmail" /></label>
+    <label>Username <input id="regUsername" /></label>
+    <label>Password <input id="regPassword" type="password" /></label>
+    <label>Role
+      <select id="regRole">
+        <option value="0">User</option>
+        <option value="1">Admin</option>
+      </select>
+    </label>
+    <button onclick="register()">Register</button>
+    <hr/>
+    <label>Login Email <input id="loginEmail" /></label>
+    <label>Login Password <input id="loginPassword" type="password" /></label>
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+    <button onclick="me()">Me</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Cities</legend>
+    <button onclick="getCities()">Get All</button>
+    <div class="row">
+      <div class="half">
+        <label>Name <input id="cityName" /></label>
+        <label>BboxMinLat <input id="cityB1" type="number" step="any" /></label>
+        <label>BboxMinLon <input id="cityB2" type="number" step="any" /></label>
+        <label>BboxMaxLat <input id="cityB3" type="number" step="any" /></label>
+        <label>BboxMaxLon <input id="cityB4" type="number" step="any" /></label>
+        <button onclick="createCity()">Create City (Admin)</button>
+      </div>
+      <div class="half">
+        <label>City Id <input id="delCityId" type="number" /></label>
+        <button onclick="deleteCity()">Delete City (Admin)</button>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>POI</legend>
+    <div class="row">
+      <div class="half">
+        <label>City Id <input id="poiCityId" type="number" /></label>
+        <button onclick="getPoisByCity()">Get POIs by City</button>
+      </div>
+      <div class="half">
+        <label>City Name <input id="poiCityName" /></label>
+        <label>Name <input id="poiName" /></label>
+        <label>Lat <input id="poiLat" type="number" step="any" /></label>
+        <label>Lon <input id="poiLon" type="number" step="any" /></label>
+        <label>Category <input id="poiCategory" /></label>
+        <label>VisitDurationMin <input id="poiDuration" type="number" /></label>
+        <label>EntranceFeeCents <input id="poiFee" type="number" /></label>
+        <label>OpeningHoursJson <textarea id="poiHours" rows="2" placeholder='{"Monday":[540,1080]}'></textarea></label>
+        <label>Description <textarea id="poiDescription" rows="2"></textarea></label>
+        <button onclick="createPoi()">Create POI (Admin)</button>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Routes</legend>
+    <div class="row">
+      <div class="half">
+        <button onclick="getMyRoutes()">Get My Routes</button>
+        <label>User Id <input id="routeUserId" type="number" /></label>
+        <button onclick="getRoutesByUser()">Get Routes by UserId</button>
+        <label>Email <input id="routeEmail" /></label>
+        <button onclick="getRoutesByEmail()">Get Routes by Email</button>
+      </div>
+      <div class="half">
+        <label>Build for UserId <input id="routeBuildUserId" type="number" /></label>
+        <label>City <input id="routeCity" /></label>
+        <label>Budget <input id="routeBudget" type="number" step="0.01" /></label>
+        <label>UserLat <input id="routeLat" type="number" step="any" /></label>
+        <label>UserLon <input id="routeLon" type="number" step="any" /></label>
+        <label>StartTime (hh:mm) <input id="routeStart" value="09:00" /></label>
+        <label>EndTime (hh:mm) <input id="routeEnd" value="18:00" /></label>
+        <label>TransportType <input id="routeTransport" value="walk" /></label>
+        <label>PreferredCategories (comma) <input id="routeCats" /></label>
+        <button onclick="buildRoute()">Build Route</button>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Output</legend>
+    <pre id="out">Ready</pre>
+  </fieldset>
+
+  <script>
+    function base() {
+      return document.getElementById('baseUrl').value.replace(/\/+$/, '');
+    }
+
+    function output(data) {
+      const el = document.getElementById('out');
+      el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    }
+
+    async function api(path, options = {}) {
+      const cookieDomain = document.getElementById('cookieDomain').value;
+      const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+      const init = {
+        method: options.method || 'GET',
+        credentials: 'include',
+        headers,
+      };
+      if (options.body) init.body = JSON.stringify(options.body);
+      if (cookieDomain) headers['Cookie-Domain'] = cookieDomain; // optional hint if server supports it
+      const res = await fetch(base() + path, init);
+      const text = await res.text();
+      try {
+        const json = text ? JSON.parse(text) : null;
+        if (!res.ok) throw json || text || res.statusText;
+        return json;
+      } catch (err) {
+        if (!res.ok) throw err;
+        return text;
+      }
+    }
+
+    async function register() {
+      try {
+        const body = {
+          email: document.getElementById('regEmail').value,
+          username: document.getElementById('regUsername').value,
+          password: document.getElementById('regPassword').value,
+          role: Number(document.getElementById('regRole').value)
+        };
+        output(await api('/api/auth/register', { method: 'POST', body }));
+      } catch (e) { output(e); }
+    }
+
+    async function login() {
+      try {
+        const body = {
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value
+        };
+        output(await api('/api/auth/login', { method: 'POST', body }));
+      } catch (e) { output(e); }
+    }
+
+    async function logout() {
+      try { output(await api('/api/auth/logout', { method: 'POST' })); }
+      catch (e) { output(e); }
+    }
+
+    async function me() {
+      try { output(await api('/api/auth/me')); }
+      catch (e) { output(e); }
+    }
+
+    async function getCities() {
+      try { output(await api('/api/city')); }
+      catch (e) { output(e); }
+    }
+
+    async function createCity() {
+      try {
+        const body = {
+          name: document.getElementById('cityName').value,
+          bboxMinLat: Number(document.getElementById('cityB1').value),
+          bboxMinLon: Number(document.getElementById('cityB2').value),
+          bboxMaxLat: Number(document.getElementById('cityB3').value),
+          bboxMaxLon: Number(document.getElementById('cityB4').value)
+        };
+        output(await api('/api/city', { method: 'POST', body }));
+      } catch (e) { output(e); }
+    }
+
+    async function deleteCity() {
+      try {
+        const id = document.getElementById('delCityId').value;
+        output(await api('/api/city/' + id, { method: 'DELETE' }));
+      } catch (e) { output(e); }
+    }
+
+    async function getPoisByCity() {
+      try {
+        const id = document.getElementById('poiCityId').value;
+        output(await api('/api/poi/city/' + id));
+      } catch (e) { output(e); }
+    }
+
+    async function createPoi() {
+      try {
+        const body = {
+          cityName: document.getElementById('poiCityName').value,
+          name: document.getElementById('poiName').value,
+          lat: Number(document.getElementById('poiLat').value),
+          lon: Number(document.getElementById('poiLon').value),
+          category: document.getElementById('poiCategory').value,
+          visitDurationMin: Number(document.getElementById('poiDuration').value),
+          entranceFeeCents: Number(document.getElementById('poiFee').value),
+          openingHoursJson: document.getElementById('poiHours').value || null,
+          description: document.getElementById('poiDescription').value || null
+        };
+        output(await api('/api/poi', { method: 'POST', body }));
+      } catch (e) { output(e); }
+    }
+
+    async function getMyRoutes() {
+      try { output(await api('/api/route')); }
+      catch (e) { output(e); }
+    }
+
+    async function getRoutesByUser() {
+      try {
+        const id = document.getElementById('routeUserId').value;
+        output(await api('/api/route/userId/' + id));
+      } catch (e) { output(e); }
+    }
+
+    async function getRoutesByEmail() {
+      try {
+        const email = encodeURIComponent(document.getElementById('routeEmail').value);
+        output(await api('/api/route/email/' + email));
+      } catch (e) { output(e); }
+    }
+
+    function parseTime(val) {
+      const [h, m] = val.split(':').map(Number);
+      return `PT${h || 0}H${m || 0}M`;
+    }
+
+    async function buildRoute() {
+      try {
+        const catsRaw = document.getElementById('routeCats').value;
+        const body = {
+          city: document.getElementById('routeCity').value,
+          budget: Number(document.getElementById('routeBudget').value),
+          userLat: Number(document.getElementById('routeLat').value),
+          userLon: Number(document.getElementById('routeLon').value),
+          startTime: parseTime(document.getElementById('routeStart').value),
+          endTime: parseTime(document.getElementById('routeEnd').value),
+          transportType: document.getElementById('routeTransport').value,
+          preferredCategories: catsRaw ? catsRaw.split(',').map(x => x.trim()).filter(Boolean) : []
+        };
+        const userId = document.getElementById('routeBuildUserId').value;
+        output(await api('/api/route/user/' + userId, { method: 'POST', body }));
+      } catch (e) { output(e); }
+    }
+  </script>
+</body>
+</html>
