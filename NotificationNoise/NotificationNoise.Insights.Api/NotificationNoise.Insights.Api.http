@@ -1,0 +1,25 @@
+@NotificationNoise.Insights.Api_HostAddress = http://localhost:5239
+@recommendationId = 1761e74d-b561-4917-8358-d2cc118efc6d
+
+GET http://localhost:5239/health
+Accept: application/json
+
+###
+
+GET http://localhost:5239/stats/top-senders?limit=10
+Accept: application/json
+
+###
+
+GET http://localhost:5239/stats/trends?days=30
+Accept: application/json
+
+###
+
+GET http://localhost:5239/recommendations?status=new
+Accept: application/json
+
+###
+
+POST http://localhost:5239/recommendations/{{recommendationId}}/dismiss
+Accept: application/json

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\NotificationNoise.BuildingBlocks\NotificationNoise.BuildingBlocks.csproj" />
+      <ProjectReference Include="..\NotificationNoise.Classifier.Application\NotificationNoise.Classifier.Application.csproj" />
+      <ProjectReference Include="..\NotificationNoise.Classifier.Infrastructure\NotificationNoise.Classifier.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

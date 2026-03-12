@@ -1,0 +1,133 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: nn_postgres
+    environment:
+      POSTGRES_USER: ${NN_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${NN_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${NN_POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - nn_pgdata:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: nn_rabbit
+    environment:
+      RABBITMQ_DEFAULT_USER: ${NN_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${NN_RABBITMQ_PASS}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  ingestion-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+      args:
+        PROJECT: NotificationNoise.Ingestion.Api
+    container_name: nn_ingestion_api
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:5231
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Db: Host=postgres;Port=5432;Database=nn_ingestion;Username=${NN_POSTGRES_USER};Password=${NN_POSTGRES_PASSWORD}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: "5672"
+      RabbitMq__User: ${NN_RABBITMQ_USER}
+      RabbitMq__Pass: ${NN_RABBITMQ_PASS}
+      FakeIngestion__Enabled: "false"
+      Gmail__ClientId: ${NN_GMAIL_CLIENT_ID}
+      Gmail__ClientSecret: ${NN_GMAIL_CLIENT_SECRET}
+      Gmail__RedirectUri: http://localhost:5231/auth/gmail/callback
+      Gmail__Scopes__0: https://www.googleapis.com/auth/gmail.readonly
+      DataProtection__KeysPath: /var/keys
+    ports:
+      - "5231:5231"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    restart: unless-stopped
+    volumes:
+      - ingestion_keys:/var/keys
+
+  classifier-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+      args:
+        PROJECT: NotificationNoise.Classifier.Api
+    container_name: nn_classifier_api
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:5184
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Db: Host=postgres;Port=5432;Database=nn_classifier;Username=${NN_POSTGRES_USER};Password=${NN_POSTGRES_PASSWORD}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: "5672"
+      RabbitMq__User: ${NN_RABBITMQ_USER}
+      RabbitMq__Pass: ${NN_RABBITMQ_PASS}
+    ports:
+      - "5184:5184"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    restart: unless-stopped
+
+  insights-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+      args:
+        PROJECT: NotificationNoise.Insights.Api
+    container_name: nn_insights_api
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:5239
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Db: Host=postgres;Port=5432;Database=nn_insights;Username=${NN_POSTGRES_USER};Password=${NN_POSTGRES_PASSWORD}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: "5672"
+      RabbitMq__User: ${NN_RABBITMQ_USER}
+      RabbitMq__Pass: ${NN_RABBITMQ_PASS}
+    ports:
+      - "5239:5239"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    restart: unless-stopped
+
+  digest-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+      args:
+        PROJECT: NotificationNoise.DigestSender.Api
+    container_name: nn_digest_api
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:5106
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Db: Host=postgres;Port=5432;Database=nn_digest;Username=${NN_POSTGRES_USER};Password=${NN_POSTGRES_PASSWORD}
+      Insights__BaseUrl: http://insights-api:5239
+    ports:
+      - "5106:5106"
+    depends_on:
+      postgres:
+        condition: service_started
+      insights-api:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  nn_pgdata:
+  ingestion_keys:

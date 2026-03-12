@@ -47,9 +47,9 @@ public class CityService(IMapper mapper, ICityRepository cityRepository) : ICity
             var updeted =  await _cityRepository.UpdateCityAsync(city);
             return _mapper.Map<CityDto>(updeted);
         }
-        catch (Exception ex)
+        catch (KeyNotFoundException ex)
         {
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException(ex.Message);
         }
     }
 

@@ -79,6 +79,13 @@ builder.Services
     .Bind(builder.Configuration.GetSection("RateLimiter"))
     .Validate(o => o.MaxAttempts > 0 && o.BanSeconds > 0, "RateLimiter values must be positive")
     .ValidateOnStart();
+
+// rabbitmq options
+builder.Services
+    .AddOptions<RabbitMqOptions>()
+    .Bind(builder.Configuration.GetSection("RabbitMQ"))
+    .Validate(o => !string.IsNullOrWhiteSpace(o.HostName), "RabbitMQ:HostName is missing")
+    .ValidateOnStart();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ILoginRateLimiter, LoginRateLimiter>();
 
@@ -145,4 +152,14 @@ public class RateLimiterOptions
 {
     public int MaxAttempts { get; set; }
     public int BanSeconds { get; set; }
+}
+
+public class RabbitMqOptions
+{
+    public string HostName { get; set; } = "localhost";
+    public int Port { get; set; } = 5672;
+    public string UserName { get; set; } = "guest";
+    public string Password { get; set; } = "guest";
+    public string VirtualHost { get; set; } = "/";
+    public string QueueName { get; set; } = "tourist.jobs";
 }
