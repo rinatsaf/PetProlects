@@ -1,0 +1,708 @@
+2026-03-16 17:48:56.607 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 17:48:56.718 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 17:48:56.720 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 17:48:56.722 +03:00 [INF] Hosting environment: Development
+2026-03-16 17:48:56.723 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 17:51:42.709 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/ - null null
+2026-03-16 17:51:42.792 +03:00 [INF] HTTP GET / => 404 in 15.2427 ms
+2026-03-16 17:51:42.808 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/ - 404 0 null 102.3106ms
+2026-03-16 17:51:42.812 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/ - null null
+2026-03-16 17:51:42.817 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5276/, Response status code: 404
+2026-03-16 17:51:42.820 +03:00 [INF] HTTP GET / => 404 in 2.9045 ms
+2026-03-16 17:51:42.823 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/ - 404 0 null 11.4763ms
+2026-03-16 17:51:42.827 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5276/, Response status code: 404
+2026-03-16 17:52:40.559 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/register - application/json-patch+json 117
+2026-03-16 17:52:40.570 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Register (Api)'
+2026-03-16 17:52:40.601 +03:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Register(Application.DTOs.Auth.RegisterRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:52:42.520 +03:00 [INF] Executed DbCommand (56ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM users AS u
+    WHERE u."Email" = @__email_0)
+2026-03-16 17:52:42.755 +03:00 [ERR] Failed executing DbCommand (7ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?', @p2='?', @p3='?' (DbType = Boolean), @p4='?', @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO users ("CreatedAt", "Email", "FirstName", "IsActive", "LastName", "PasswordHash", "Role", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7)
+RETURNING "Id";
+2026-03-16 17:52:42.781 +03:00 [ERR] An exception occurred in the database while saving changes for context type 'Infrastructure.Persistence.CinemaDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=03:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|101_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=03:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|101_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-03-16 17:52:42.810 +03:00 [INF] Executed action Api.Controllers.AuthController.Register (Api) in 2202.8033ms
+2026-03-16 17:52:42.813 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Register (Api)'
+2026-03-16 17:52:42.815 +03:00 [ERR] Unhandled exception occurred.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> System.ArgumentException: Cannot write DateTimeOffset with Offset=03:00:00 to PostgreSQL type 'timestamp with time zone', only offset 0 (UTC) is supported.  (Parameter 'value')
+   at Npgsql.Internal.Converters.DateTimeOffsetConverter.WriteCore(PgWriter writer, DateTimeOffset value)
+   at Npgsql.Internal.PgBufferedConverter`1.Write(PgWriter writer, T value)
+   at Npgsql.Internal.PgBufferedConverter`1.WriteAsObject(Boolean async, PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.Internal.PgConverter.WriteAsObjectAsync(PgWriter writer, Object value, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.WriteValue(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlParameter.Write(Boolean async, PgWriter writer, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.WriteBind(List`1 parameters, String portal, Byte[] asciiName, Boolean allResultTypesAreUnknown, Boolean[] unknownResultTypeList, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.<Write>g__WriteExecute|101_0(NpgsqlConnector connector, Boolean async, Boolean flush, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Infrastructure.Persistence.Repositories.UserRepository.AddAsync(User user, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Infrastructure\Persistence\Repositories\UserRepository.cs:line 29
+   at Application.Services.AuthService.RegisterAsync(RegisterRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 64
+   at Api.Controllers.AuthController.Register(RegisterRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 18
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:52:42.865 +03:00 [ERR] HTTP POST /api/auth/register => 500 in 2299.8154 ms
+2026-03-16 17:52:42.874 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/register - 500 null application/json 2315.434ms
+2026-03-16 17:55:10.357 +03:00 [INF] Application is shutting down...
+2026-03-16 17:55:14.884 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 17:55:14.999 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 17:55:15.001 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 17:55:15.003 +03:00 [INF] Hosting environment: Development
+2026-03-16 17:55:15.004 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 17:55:17.041 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/register - application/json-patch+json 117
+2026-03-16 17:55:17.086 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Register (Api)'
+2026-03-16 17:55:17.104 +03:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Register(Application.DTOs.Auth.RegisterRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:55:18.263 +03:00 [INF] Executed DbCommand (30ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM users AS u
+    WHERE u."Email" = @__email_0)
+2026-03-16 17:55:18.421 +03:00 [INF] Executed DbCommand (19ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?', @p2='?', @p3='?' (DbType = Boolean), @p4='?', @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO users ("CreatedAt", "Email", "FirstName", "IsActive", "LastName", "PasswordHash", "Role", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7)
+RETURNING "Id";
+2026-03-16 17:55:18.464 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2026-03-16 17:55:18.471 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 17:55:18.477 +03:00 [INF] Executed action Api.Controllers.AuthController.Register (Api) in 1368.7895ms
+2026-03-16 17:55:18.482 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Register (Api)'
+2026-03-16 17:55:18.488 +03:00 [INF] HTTP POST /api/auth/register => 204 in 1407.0125 ms
+2026-03-16 17:55:18.496 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/register - 204 null null 1455.9847ms
+2026-03-16 17:56:53.263 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 113
+2026-03-16 17:56:53.274 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:56:53.281 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:56:53.377 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:56:53.405 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2026-03-16 17:56:53.406 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 17:56:53.407 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 123.1817ms
+2026-03-16 17:56:53.408 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:56:53.409 +03:00 [INF] HTTP POST /api/auth/login => 204 in 142.1825 ms
+2026-03-16 17:56:53.411 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 204 null null 148.7758ms
+2026-03-16 17:56:56.209 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 113
+2026-03-16 17:56:56.212 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:56:56.214 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:56:56.234 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:56:56.250 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2026-03-16 17:56:56.251 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 17:56:56.252 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 36.3839ms
+2026-03-16 17:56:56.252 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:56:56.253 +03:00 [INF] HTTP POST /api/auth/login => 204 in 41.6126 ms
+2026-03-16 17:56:56.254 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 204 null null 44.915ms
+2026-03-16 17:57:12.596 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 114
+2026-03-16 17:57:12.600 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:12.601 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:12.607 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:57:12.634 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 31.3547ms
+2026-03-16 17:57:12.635 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:12.636 +03:00 [ERR] Unhandled exception occurred.
+System.UnauthorizedAccessException: Invalid credentials
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 30
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:12.663 +03:00 [INF] HTTP POST /api/auth/login => 401 in 64.2150 ms
+2026-03-16 17:57:12.665 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 401 null application/json 68.7088ms
+2026-03-16 17:57:13.761 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 114
+2026-03-16 17:57:13.764 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:13.765 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:13.772 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:57:13.789 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 22.3236ms
+2026-03-16 17:57:13.790 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:13.791 +03:00 [ERR] Unhandled exception occurred.
+System.UnauthorizedAccessException: Invalid credentials
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 30
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:13.795 +03:00 [INF] HTTP POST /api/auth/login => 401 in 31.5709 ms
+2026-03-16 17:57:13.797 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 401 null application/json 36.2095ms
+2026-03-16 17:57:14.497 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 114
+2026-03-16 17:57:14.500 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:14.502 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:14.508 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:57:14.525 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 21.05ms
+2026-03-16 17:57:14.526 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:14.527 +03:00 [ERR] Unhandled exception occurred.
+System.UnauthorizedAccessException: Invalid credentials
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 30
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:14.531 +03:00 [INF] HTTP POST /api/auth/login => 401 in 31.7535 ms
+2026-03-16 17:57:14.534 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 401 null application/json 37.3604ms
+2026-03-16 17:57:15.206 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 114
+2026-03-16 17:57:15.209 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:15.210 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:15.216 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:57:15.232 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 20.0673ms
+2026-03-16 17:57:15.233 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:15.233 +03:00 [ERR] Unhandled exception occurred.
+System.UnauthorizedAccessException: Invalid credentials
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 30
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:15.237 +03:00 [INF] HTTP POST /api/auth/login => 401 in 28.0805 ms
+2026-03-16 17:57:15.238 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 401 null application/json 32.4371ms
+2026-03-16 17:57:15.924 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 114
+2026-03-16 17:57:15.927 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:15.928 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:15.938 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 17:57:15.957 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 25.8283ms
+2026-03-16 17:57:15.958 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:15.960 +03:00 [ERR] Unhandled exception occurred.
+System.UnauthorizedAccessException: Invalid credentials
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 30
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:15.965 +03:00 [INF] HTTP POST /api/auth/login => 401 in 37.9546 ms
+2026-03-16 17:57:15.967 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 401 null application/json 42.6371ms
+2026-03-16 17:57:16.647 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 114
+2026-03-16 17:57:16.649 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:16.650 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:16.653 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 1.5717ms
+2026-03-16 17:57:16.655 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:16.655 +03:00 [ERR] Unhandled exception occurred.
+Application.Exceptions.RateLimitExceededException: Too many login attempts. Try again later.
+   at Infrastructure.Security.RedisLoginRateLimiter.EnsureNotLimitedAsync(String email, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Infrastructure\Security\RedisLoginRateLimiter.cs:line 20
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 22
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:16.660 +03:00 [INF] HTTP POST /api/auth/login => 429 in 11.2187 ms
+2026-03-16 17:57:16.662 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 429 null application/json 15.1818ms
+2026-03-16 17:57:23.854 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 113
+2026-03-16 17:57:23.856 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:23.857 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:23.862 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 3.5792ms
+2026-03-16 17:57:23.864 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 17:57:23.865 +03:00 [ERR] Unhandled exception occurred.
+Application.Exceptions.RateLimitExceededException: Too many login attempts. Try again later.
+   at Infrastructure.Security.RedisLoginRateLimiter.EnsureNotLimitedAsync(String email, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Infrastructure\Security\RedisLoginRateLimiter.cs:line 20
+   at Application.Services.AuthService.SignInAsync(LoginRequest request, String ip, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\AuthService.cs:line 22
+   at Api.Controllers.AuthController.Login(LoginRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:57:23.871 +03:00 [INF] HTTP POST /api/auth/login => 429 in 15.2066 ms
+2026-03-16 17:57:23.873 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 429 null application/json 19.0746ms
+2026-03-16 17:57:50.754 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/logout - null 0
+2026-03-16 17:57:50.762 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Logout (Api)'
+2026-03-16 17:57:50.766 +03:00 [INF] Route matched with {action = "Logout", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Logout() on controller Api.Controllers.AuthController (Api).
+2026-03-16 17:57:50.770 +03:00 [INF] AuthenticationScheme: Cookies signed out.
+2026-03-16 17:57:50.771 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 17:57:50.772 +03:00 [INF] Executed action Api.Controllers.AuthController.Logout (Api) in 4.2738ms
+2026-03-16 17:57:50.773 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Logout (Api)'
+2026-03-16 17:57:50.775 +03:00 [INF] HTTP POST /api/auth/logout => 204 in 17.4801 ms
+2026-03-16 17:57:50.776 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/logout - 204 null null 22.0352ms
+2026-03-16 17:57:56.263 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/logout - null 0
+2026-03-16 17:57:56.266 +03:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-16 17:57:56.270 +03:00 [INF] AuthenticationScheme: Cookies was challenged.
+2026-03-16 17:57:56.271 +03:00 [INF] HTTP POST /api/auth/logout => 302 in 6.0283 ms
+2026-03-16 17:57:56.273 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/logout - 302 0 null 9.41ms
+2026-03-16 17:57:56.275 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/api/auth/login?ReturnUrl=%2Fapi%2Fauth%2Flogout - null null
+2026-03-16 17:57:56.281 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2026-03-16 17:57:56.281 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2026-03-16 17:57:56.282 +03:00 [INF] HTTP GET /api/auth/login => 405 in 1.3127 ms
+2026-03-16 17:57:56.284 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/api/auth/login?ReturnUrl=%2Fapi%2Fauth%2Flogout - 405 0 null 8.334ms
+2026-03-16 17:57:58.793 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/logout - null 0
+2026-03-16 17:57:58.797 +03:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-16 17:57:58.799 +03:00 [INF] AuthenticationScheme: Cookies was challenged.
+2026-03-16 17:57:58.800 +03:00 [INF] HTTP POST /api/auth/logout => 302 in 4.6547 ms
+2026-03-16 17:57:58.801 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/logout - 302 0 null 8.1579ms
+2026-03-16 17:57:58.804 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/api/auth/login?ReturnUrl=%2Fapi%2Fauth%2Flogout - null null
+2026-03-16 17:57:58.807 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2026-03-16 17:57:58.808 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2026-03-16 17:57:58.809 +03:00 [INF] HTTP GET /api/auth/login => 405 in 2.1020 ms
+2026-03-16 17:57:58.810 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/api/auth/login?ReturnUrl=%2Fapi%2Fauth%2Flogout - 405 0 null 6.317ms
+2026-03-16 17:59:02.292 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 17:59:02.295 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 17:59:02.300 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 17:59:02.426 +03:00 [INF] Executed DbCommand (10ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 17:59:02.439 +03:00 [INF] Executing CreatedAtActionResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 17:59:02.460 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 158.8746ms
+2026-03-16 17:59:02.462 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 17:59:02.465 +03:00 [ERR] Unhandled exception occurred.
+System.InvalidOperationException: No route matches the supplied values.
+   at Microsoft.AspNetCore.Mvc.CreatedAtActionResult.OnFormatting(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor.ExecuteAsyncCore(ActionContext context, ObjectResult result, Type objectType, Object value)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor.ExecuteAsync(ActionContext context, ObjectResult result)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeNextResultFilterAsync[TFilter,TFilterAsync]()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 17:59:02.473 +03:00 [ERR] HTTP POST /api/movie => 500 in 178.4449 ms
+2026-03-16 17:59:02.478 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 500 null application/json 186.145ms
+2026-03-16 18:00:24.078 +03:00 [INF] Application is shutting down...
+2026-03-16 18:00:29.874 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:00:30.008 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:00:30.014 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:00:30.016 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:00:30.019 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:00:32.200 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:00:32.236 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:00:32.256 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:00:33.243 +03:00 [INF] Executed DbCommand (34ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 18:00:33.279 +03:00 [INF] Executing CreatedAtRouteResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 18:00:33.314 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 1053.5877ms
+2026-03-16 18:00:33.318 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:00:33.323 +03:00 [INF] HTTP POST /api/movie => 201 in 1090.6398 ms
+2026-03-16 18:00:33.332 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 201 null application/json; charset=utf-8 1133.7389ms
+2026-03-16 18:02:25.310 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:02:25.314 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:02:25.315 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:02:25.365 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 18:02:25.368 +03:00 [INF] Executing CreatedAtRouteResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 18:02:25.371 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 54.9421ms
+2026-03-16 18:02:25.373 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:02:25.374 +03:00 [INF] HTTP POST /api/movie => 201 in 60.4929 ms
+2026-03-16 18:02:25.377 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 201 null application/json; charset=utf-8 67.5352ms
+2026-03-16 18:02:31.213 +03:00 [INF] Application is shutting down...
+2026-03-16 18:02:34.669 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:02:34.773 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:02:34.776 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:02:34.777 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:02:34.778 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:02:35.893 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:02:35.943 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:02:35.959 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:02:36.981 +03:00 [INF] Executed DbCommand (33ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 18:02:37.018 +03:00 [INF] Executing CreatedAtRouteResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 18:02:37.049 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 1085.4934ms
+2026-03-16 18:02:37.053 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:02:37.060 +03:00 [INF] HTTP POST /api/movie => 201 in 1120.7131 ms
+2026-03-16 18:02:37.067 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 201 null application/json; charset=utf-8 1175.8594ms
+2026-03-16 18:02:59.618 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:02:59.623 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:02:59.625 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:02:59.690 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 18:02:59.694 +03:00 [INF] Executing CreatedAtRouteResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 18:02:59.697 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 70.1152ms
+2026-03-16 18:02:59.698 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:02:59.700 +03:00 [INF] HTTP POST /api/movie => 201 in 78.2528 ms
+2026-03-16 18:02:59.703 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 201 null application/json; charset=utf-8 85.6032ms
+2026-03-16 18:04:13.393 +03:00 [INF] Application is shutting down...
+2026-03-16 18:04:38.315 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:04:38.413 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:04:38.417 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:04:38.418 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:04:38.419 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:04:40.449 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:04:40.492 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:04:40.514 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:04:40.698 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 179.5509ms
+2026-03-16 18:04:40.706 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:04:40.708 +03:00 [ERR] Unhandled exception occurred.
+Application.Exceptions.ValidationException: ReleaseDate is required
+   at Application.Services.MovieService.CreateAsync(CreateMovieRequest request, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Application\Services\MovieService.cs:line 35
+   at Api.Controllers.MovieController.CreateMovieAsync(CreateMovieRequest movie, CancellationToken cancellationToken) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Controllers\MovieController.cs:line 32
+   at lambda_method5(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Api.Middlewares.ExceptionHandlingMiddleware.Invoke(HttpContext context) in C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api\Middlewares\ExceptionHandlingMiddleware.cs:line 15
+2026-03-16 18:04:40.742 +03:00 [INF] HTTP POST /api/movie => 400 in 254.1399 ms
+2026-03-16 18:04:40.746 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 400 null application/json 298.9478ms
+2026-03-16 18:08:02.918 +03:00 [INF] Application is shutting down...
+2026-03-16 18:08:07.286 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:08:07.365 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:08:07.367 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:08:07.368 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:08:07.369 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:08:11.330 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:08:11.362 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:08:11.380 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:08:12.391 +03:00 [INF] Executed DbCommand (40ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 18:08:12.425 +03:00 [INF] Executing CreatedAtRouteResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 18:08:12.457 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 1072.9471ms
+2026-03-16 18:08:12.461 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:08:12.467 +03:00 [INF] HTTP POST /api/movie => 201 in 1106.2197 ms
+2026-03-16 18:08:12.474 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 201 null application/json; charset=utf-8 1145.2667ms
+2026-03-16 18:09:36.915 +03:00 [INF] Application is shutting down...
+2026-03-16 18:09:40.133 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:09:40.214 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:09:40.217 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:09:40.218 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:09:40.218 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:09:41.538 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:09:41.569 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:09:41.583 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:09:42.410 +03:00 [INF] Executed DbCommand (31ms) [Parameters=[@p0='?', @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Decimal), @p7='?', @p8='?' (DbType = Date), @p9='?', @p10='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO movies ("AgeRating", "Country", "CreatedAt", "Description", "DurationMinutes", "IsActive", "PopularityScore", "PosterUrl", "ReleaseDate", "Title", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2026-03-16 18:09:42.441 +03:00 [INF] Executing CreatedAtRouteResult, writing value of type 'Application.DTOs.Movies.MovieDto'.
+2026-03-16 18:09:42.470 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 883.2087ms
+2026-03-16 18:09:42.474 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:09:42.479 +03:00 [INF] HTTP POST /api/movie => 201 in 913.7809 ms
+2026-03-16 18:09:42.486 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 201 null application/json; charset=utf-8 948.7311ms
+2026-03-16 18:10:15.868 +03:00 [INF] Application is shutting down...
+2026-03-16 18:10:18.714 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:10:18.809 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:10:18.812 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:10:18.813 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:10:18.814 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:10:20.417 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:10:20.480 +03:00 [INF] Executing endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:10:20.499 +03:00 [INF] Route matched with {action = "CreateMovie", controller = "Movie"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Application.DTOs.Movies.MovieDto]] CreateMovieAsync(Application.DTOs.Movies.CreateMovieRequest, System.Threading.CancellationToken) on controller Api.Controllers.MovieController (Api).
+2026-03-16 18:10:20.664 +03:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2026-03-16 18:10:20.692 +03:00 [INF] Executed action Api.Controllers.MovieController.CreateMovieAsync (Api) in 183.7777ms
+2026-03-16 18:10:20.700 +03:00 [INF] Executed endpoint 'Api.Controllers.MovieController.CreateMovieAsync (Api)'
+2026-03-16 18:10:20.706 +03:00 [INF] HTTP POST /api/movie => 400 in 234.6487 ms
+2026-03-16 18:10:20.710 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 400 null application/problem+json; charset=utf-8 293.9554ms
+2026-03-16 18:12:31.324 +03:00 [INF] Application is shutting down...
+2026-03-16 18:12:34.585 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:12:34.658 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:12:34.661 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:12:34.662 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:12:34.662 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:12:36.413 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:12:36.444 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Cashier|Admin)
+2026-03-16 18:12:36.449 +03:00 [INF] AuthenticationScheme: Cookies was challenged.
+2026-03-16 18:12:36.455 +03:00 [INF] HTTP POST /api/movie => 302 in 13.8313 ms
+2026-03-16 18:12:36.463 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 302 0 null 51.4463ms
+2026-03-16 18:12:36.472 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/api/auth/login?ReturnUrl=%2Fapi%2Fmovie - null null
+2026-03-16 18:12:36.483 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2026-03-16 18:12:36.484 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2026-03-16 18:12:36.485 +03:00 [INF] HTTP GET /api/auth/login => 405 in 6.0695 ms
+2026-03-16 18:12:36.487 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/api/auth/login?ReturnUrl=%2Fapi%2Fmovie - 405 0 null 14.7023ms
+2026-03-16 18:13:50.241 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger - null null
+2026-03-16 18:13:50.247 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger - 301 0 null 5.4497ms
+2026-03-16 18:13:50.251 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/index.html - null null
+2026-03-16 18:13:50.336 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/index.html - 200 null text/html;charset=utf-8 85.7315ms
+2026-03-16 18:13:50.353 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/index.css - null null
+2026-03-16 18:13:50.353 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/swagger-ui.css - null null
+2026-03-16 18:13:50.355 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/swagger-ui-standalone-preset.js - null null
+2026-03-16 18:13:50.355 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/swagger-ui-bundle.js - null null
+2026-03-16 18:13:50.355 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/index.js - null null
+2026-03-16 18:13:50.370 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/index.css - 200 152 text/css 17.291ms
+2026-03-16 18:13:50.371 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/swagger-ui.css - 200 26248 text/css 17.5672ms
+2026-03-16 18:13:50.371 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/index.js - 200 null application/javascript;charset=utf-8 15.7113ms
+2026-03-16 18:13:50.379 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/swagger-ui-standalone-preset.js - 200 76581 text/javascript 23.895ms
+2026-03-16 18:13:50.379 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/swagger-ui-bundle.js - 200 416963 text/javascript 24.0467ms
+2026-03-16 18:13:50.523 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/v1/swagger.json - null null
+2026-03-16 18:13:50.528 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/swagger/favicon-32x32.png - null null
+2026-03-16 18:13:50.535 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/favicon-32x32.png - 200 628 image/png 7.1476ms
+2026-03-16 18:13:50.676 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 152.5877ms
+2026-03-16 18:15:05.760 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 113
+2026-03-16 18:15:05.765 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 18:15:05.786 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 18:15:07.226 +03:00 [INF] Executed DbCommand (44ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 18:15:07.334 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2026-03-16 18:15:07.340 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 18:15:07.343 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 1552.7876ms
+2026-03-16 18:15:07.345 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 18:15:07.347 +03:00 [INF] HTTP POST /api/auth/login => 204 in 1583.4444 ms
+2026-03-16 18:15:07.353 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 204 null null 1593.1719ms
+2026-03-16 18:15:12.158 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:15:12.167 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Cashier|Admin)
+2026-03-16 18:15:12.170 +03:00 [INF] AuthenticationScheme: Cookies was forbidden.
+2026-03-16 18:15:12.171 +03:00 [INF] HTTP POST /api/movie => 302 in 11.4114 ms
+2026-03-16 18:15:12.173 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 302 0 null 14.9064ms
+2026-03-16 18:15:12.175 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5276/Account/AccessDenied?ReturnUrl=%2Fapi%2Fmovie - null null
+2026-03-16 18:15:12.178 +03:00 [INF] HTTP GET /Account/AccessDenied => 404 in 0.9913 ms
+2026-03-16 18:15:12.180 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5276/Account/AccessDenied?ReturnUrl=%2Fapi%2Fmovie - 404 0 null 4.5221ms
+2026-03-16 18:15:12.182 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5276/Account/AccessDenied, Response status code: 404
+2026-03-16 18:17:21.555 +03:00 [INF] Application is shutting down...
+2026-03-16 18:17:24.372 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:17:24.461 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:17:24.463 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:17:24.464 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:17:24.465 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:17:26.151 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 113
+2026-03-16 18:17:26.187 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 18:17:26.201 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 18:17:27.051 +03:00 [INF] Executed DbCommand (27ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 18:17:27.122 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2026-03-16 18:17:27.125 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 18:17:27.128 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 922.952ms
+2026-03-16 18:17:27.131 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 18:17:27.134 +03:00 [INF] HTTP POST /api/auth/login => 204 in 954.6352 ms
+2026-03-16 18:17:27.142 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 204 null null 992.7056ms
+2026-03-16 18:17:28.634 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/movie - application/json-patch+json 118
+2026-03-16 18:17:28.644 +03:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Cashier|Admin)
+2026-03-16 18:17:28.648 +03:00 [INF] AuthenticationScheme: Cookies was forbidden.
+2026-03-16 18:17:28.649 +03:00 [INF] HTTP POST /api/movie => 403 in 11.4699 ms
+2026-03-16 18:17:28.651 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/movie - 403 0 null 17.2048ms
+2026-03-16 18:31:47.168 +03:00 [INF] Application is shutting down...
+2026-03-16 18:33:00.958 +03:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-16 18:33:01.179 +03:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+2026-03-16 18:33:01.186 +03:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-03-16 18:33:01.188 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+2026-03-16 18:33:01.189 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-16 18:33:01.191 +03:00 [INF] No migrations were applied. The database is already up to date.
+2026-03-16 18:35:09.554 +03:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-16 18:36:35.515 +03:00 [INF] User profile is available. Using 'C:\Users\Doom\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-16 18:36:35.603 +03:00 [INF] Now listening on: http://localhost:5276
+2026-03-16 18:36:35.605 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-16 18:36:35.606 +03:00 [INF] Hosting environment: Development
+2026-03-16 18:36:35.607 +03:00 [INF] Content root path: C:\Users\Doom\Desktop\OrisHWs\asp-sem-work-rinatsaf\Cinema\Api
+2026-03-16 18:36:38.866 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5276/api/auth/login - application/json 113
+2026-03-16 18:36:38.904 +03:00 [INF] Executing endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 18:36:38.920 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller Api.Controllers.AuthController (Api).
+2026-03-16 18:36:39.917 +03:00 [INF] Executed DbCommand (30ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role", u."UpdatedAt"
+FROM users AS u
+WHERE u."Email" = @__email_0
+LIMIT 1
+2026-03-16 18:36:39.993 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2026-03-16 18:36:39.997 +03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-03-16 18:36:40.000 +03:00 [INF] Executed action Api.Controllers.AuthController.Login (Api) in 1076.0961ms
+2026-03-16 18:36:40.003 +03:00 [INF] Executed endpoint 'Api.Controllers.AuthController.Login (Api)'
+2026-03-16 18:36:40.006 +03:00 [INF] HTTP POST /api/auth/login => 204 in 1112.9219 ms
+2026-03-16 18:36:40.014 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5276/api/auth/login - 204 null null 1149.1293ms
+2026-03-16 18:40:19.491 +03:00 [INF] Application is shutting down...
+2026-03-16 18:40:37.505 +03:00 [ERR] An error occurred using the connection to database 'cinema_db' on server 'tcp://postgres:5432'.
+2026-03-16 18:43:55.298 +03:00 [ERR] An error occurred using the connection to database 'cinema_db' on server 'tcp://postgres:5433'.
+2026-03-16 18:46:19.070 +03:00 [ERR] An error occurred using the connection to database 'cinema_db' on server 'tcp://localhost:5433'.
