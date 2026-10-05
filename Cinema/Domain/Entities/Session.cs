@@ -5,6 +5,7 @@ namespace Domain.Entities;
 
 public sealed class Session : BaseEntity
 {
+    public long CreatedByUserId { get; set; }
     public long MovieId { get; set; }
     public required Movie Movie { get; set; }
 

@@ -1,4 +1,4 @@
-using Application.Abstractions.Repositories;
+﻿using Application.Abstractions.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +44,7 @@ public class SeatRepository(CinemaDbContext context) : ISeatRepository
 
     public async Task<Seat> AddAsync(Seat seat, CancellationToken cancellationToken = default)
     {
-        await _context.Seats.AddAsync(seat, cancellationToken);
+        _context.Seats.Add(seat);
         await _context.SaveChangesAsync(cancellationToken);
         return seat;
     }
@@ -68,3 +68,5 @@ public class SeatRepository(CinemaDbContext context) : ISeatRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
+
+

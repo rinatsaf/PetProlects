@@ -1,3 +1,4 @@
+﻿using Application;
 using Application.Abstractions.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -8,19 +9,30 @@ public class OrderRepository(CinemaDbContext context) : IOrderRepository
 {
     private readonly CinemaDbContext _context = context;
 
-    public async Task<Order?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Order?> GetByIdAsync(long id, CurrentUserInfo info, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders
+        var query = BuildAccessibleOrdersQuery(info, asNoTracking: false)
+            .Include(o => o.User)
             .Include(o => o.Tickets)
-            .Include(o => o.Payments)
+            .Include(o => o.Payments);
+
+        return await query
             .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Order>> GetByUserAsync(long userId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Order>> GetAccessibleAsync(CurrentUserInfo info, long? userId = null, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders
-            .AsNoTracking()
-            .Where(o => o.UserId == userId)
+        IQueryable<Order> query = BuildAccessibleOrdersQuery(info, asNoTracking: true);
+        query = query
+            .Include(o => o.Tickets)
+            .Include(o => o.Payments);
+
+        if (userId.HasValue)
+        {
+            query = query.Where(o => o.UserId == userId.Value);
+        }
+
+        return await query
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync(cancellationToken);
     }
@@ -40,7 +52,7 @@ public class OrderRepository(CinemaDbContext context) : IOrderRepository
 
     public async Task<Order> AddAsync(Order order, CancellationToken cancellationToken = default)
     {
-        await _context.Orders.AddAsync(order, cancellationToken);
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync(cancellationToken);
         return order;
     }
@@ -48,10 +60,14 @@ public class OrderRepository(CinemaDbContext context) : IOrderRepository
     public async Task<Order> AddWithTicketsAsync(Order order, IEnumerable<Ticket> tickets, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-        await _context.Orders.AddAsync(order, cancellationToken);
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _context.Tickets.AddRangeAsync(tickets, cancellationToken);
+        foreach (var ticket in tickets)
+        {
+            ticket.OrderId = order.Id;
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
@@ -64,4 +80,34 @@ public class OrderRepository(CinemaDbContext context) : IOrderRepository
         await _context.SaveChangesAsync(cancellationToken);
         return order;
     }
+
+    private IQueryable<Order> BuildAccessibleOrdersQuery(CurrentUserInfo info, bool asNoTracking)
+    {
+        if (!info.IsAuthenticated)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        IQueryable<Order> query = _context.Orders;
+        if (asNoTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        if (info.IsAdmin)
+        {
+            return query;
+        }
+
+        if (info.IsCashier)
+        {
+            return query.Where(x =>
+                x.UserId == info.UserId ||
+                x.Tickets.Any(t => t.Session.CreatedByUserId == info.UserId));
+        }
+
+        return query.Where(x => x.UserId == info.UserId);
+    }
 }
+
+

@@ -3,6 +3,7 @@ namespace Application.DTOs.Payments;
 public sealed class PaymentDto
 {
     public long Id { get; set; }
+    public long CreatedByUserId { get; set; }
     public long OrderId { get; set; }
     public string Provider { get; set; } = null!;
     public string ExternalPaymentId { get; set; } = null!;

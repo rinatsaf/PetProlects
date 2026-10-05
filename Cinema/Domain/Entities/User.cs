@@ -16,5 +16,6 @@ public sealed class User : BaseEntity
     public ICollection<Order> Orders { get; set; } = new List<Order>();
     public ICollection<UserInteraction> Interactions { get; set; } = new List<UserInteraction>();
     public ICollection<UserPreference> Preferences { get; set; } = new List<UserPreference>();
+    public ICollection<MovieReview>  Reviews { get; set; } = new List<MovieReview>();
 }
 

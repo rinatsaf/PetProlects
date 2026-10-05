@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
-public class CinemaDbContext : DbContext
+public class CinemaDbContext(DbContextOptions<CinemaDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Movie> Movies => Set<Movie>();
@@ -17,10 +17,7 @@ public class CinemaDbContext : DbContext
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<UserInteraction> UserInteractions => Set<UserInteraction>();
     public DbSet<UserPreference> UserPreferences => Set<UserPreference>();
-    
-    public CinemaDbContext(DbContextOptions<CinemaDbContext> options) : base(options)
-    {
-    }
+    public DbSet<MovieReview> MovieReviews => Set<MovieReview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

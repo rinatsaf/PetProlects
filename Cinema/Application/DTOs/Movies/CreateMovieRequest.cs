@@ -10,4 +10,5 @@ public class CreateMovieRequest
     public DateOnly? ReleaseDate { get; set; }
     public string? PosterUrl { get; set; }
     public decimal? PopularityScore { get; set; }
+    public IEnumerable<long> GenreIds { get; set; } = Array.Empty<long>();
 }

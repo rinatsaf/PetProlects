@@ -7,11 +7,12 @@ public sealed class CreateOrderRequestValidator : AbstractValidator<CreateOrderR
 {
     public CreateOrderRequestValidator()
     {
-        RuleFor(x => x.UserId).GreaterThan(0);
+        When(x => x.UserId.HasValue, () =>
+        {
+            RuleFor(x => x.UserId!.Value).GreaterThan(0);
+        });
         RuleFor(x => x.SessionId).GreaterThan(0);
         RuleFor(x => x.SeatIds).NotEmpty();
         RuleForEach(x => x.SeatIds).GreaterThan(0);
-        RuleFor(x => x.HoldId).NotEmpty();
-        RuleFor(x => x.TotalAmount).GreaterThan(0);
     }
 }

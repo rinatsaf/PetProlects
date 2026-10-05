@@ -5,6 +5,6 @@ namespace Application.Abstractions.Services;
 
 public interface IAuthService
 {
-    Task<ClaimsPrincipal> SignInAsync(LoginRequest request, string ip, CancellationToken cancellationToken = default);
+    Task<ClaimsPrincipal> SignInAsync(LoginRequest request, CancellationToken cancellationToken = default);
     Task<ClaimsPrincipal> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);
 }

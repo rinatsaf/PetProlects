@@ -21,6 +21,15 @@ public class GenreRepository(CinemaDbContext context) : IGenreRepository
         return await _context.Genres.FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Genre>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default)
+    {
+        var genreIds = ids.Distinct().ToArray();
+
+        return await _context.Genres
+            .Where(g => genreIds.Contains(g.Id))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await _context.Genres.AnyAsync(x => x.Name == name, cancellationToken);
@@ -33,7 +42,7 @@ public class GenreRepository(CinemaDbContext context) : IGenreRepository
 
     public async Task<Genre> AddAsync(Genre genre, CancellationToken cancellationToken = default)
     {
-        await _context.Genres.AddAsync(genre, cancellationToken);
+        _context.Genres.Add(genre);
         await _context.SaveChangesAsync(cancellationToken);
         return genre;
     }
@@ -52,3 +61,5 @@ public class GenreRepository(CinemaDbContext context) : IGenreRepository
         return genre;
     }
 }
+
+

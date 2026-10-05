@@ -1,4 +1,6 @@
-﻿namespace Application.DTOs.Movies;
+﻿using Application.DTOs.Genres;
+
+namespace Application.DTOs.Movies;
 
 public class MovieDto
 {
@@ -12,4 +14,8 @@ public class MovieDto
     public string? PosterUrl { get; set; }
     public decimal PopularityScore { get; set; }
     public bool IsActive { get; set; }
+    public double? AverageRating {get; set;}
+    public int ReviewsCount { get; set; }
+    public IEnumerable<long> GenreIds { get; set; } = Array.Empty<long>();
+    public IEnumerable<GenreDto> Genres { get; set; } = Array.Empty<GenreDto>();
 }

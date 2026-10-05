@@ -1,4 +1,4 @@
-using Application.Abstractions.Repositories;
+﻿using Application.Abstractions.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +36,7 @@ public class HallRepository(CinemaDbContext context) : IHallRepository
 
     public async Task<Hall> AddAsync(Hall hall, CancellationToken cancellationToken = default)
     {
-        await _context.Halls.AddAsync(hall, cancellationToken);
+        _context.Halls.Add(hall);
         await _context.SaveChangesAsync(cancellationToken);
         return hall;
     }
@@ -55,3 +55,5 @@ public class HallRepository(CinemaDbContext context) : IHallRepository
         return hall;
     }
 }
+
+

@@ -18,6 +18,7 @@ public class SessionConfiguration : IEntityTypeConfiguration<Session>
         builder.Property(x => x.Status)
             .IsRequired();
 
+        builder.HasIndex(x => x.CreatedByUserId);
         builder.HasIndex(x => new { x.MovieId, x.StartTime });
         builder.HasIndex(x => new { x.HallId, x.StartTime });
 

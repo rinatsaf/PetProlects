@@ -57,8 +57,16 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("CreatedByUserId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -83,6 +91,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("halls", (string)null);
                 });
@@ -225,6 +235,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long>("CreatedByUserId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -258,6 +271,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("OrderId", "Status");
 
@@ -319,6 +334,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long>("CreatedByUserId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTimeOffset>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -339,6 +357,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedByUserId");
+
                     b.HasIndex("HallId", "StartTime");
 
                     b.HasIndex("MovieId", "StartTime");
@@ -357,7 +377,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("OrderId")
+                    b.Property<long?>("OrderId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Price")
@@ -593,8 +613,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Order", "Order")
                         .WithMany("Tickets")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Seat", "Seat")
                         .WithMany("Tickets")

@@ -1,18 +1,23 @@
 using Application.Abstractions.Services;
+using Infrastructure.Options;
+using Microsoft.Extensions.Options;
 
 namespace Api.HostedServices;
 
-public sealed class ExpiredOrdersCleanupHostedService(IServiceScopeFactory scopeFactory, ILogger<ExpiredOrdersCleanupHostedService> logger) : BackgroundService
+public sealed class ExpiredOrdersCleanupHostedService(
+    IServiceScopeFactory scopeFactory,
+    ILogger<ExpiredOrdersCleanupHostedService> logger,
+    IOptionsSnapshot<OrderCleanupOptions> options) : BackgroundService
 {
+    private readonly TimeSpan _pollingInterval = TimeSpan.FromSeconds(options.Value.PollingIntervalSec);
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var delay = TimeSpan.FromMinutes(1);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
                 using var scope = scopeFactory.CreateScope();
-                // Hosted Sevice у нас синглтон, поэтому достаем завимсоть так
                 var cleanupService = scope.ServiceProvider.GetRequiredService<IOrderCleanupService>();
                 var count = await cleanupService.CancelExpiredAsync(stoppingToken);
                 if (count > 0)
@@ -27,11 +32,11 @@ public sealed class ExpiredOrdersCleanupHostedService(IServiceScopeFactory scope
 
             try
             {
-                await Task.Delay(delay, stoppingToken);
+                await Task.Delay(_pollingInterval, stoppingToken);
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException ex)
             {
-                // ignore
+                throw new OperationCanceledException("Expired orders cleanup task was cancelled", ex, stoppingToken);
             }
         }
     }

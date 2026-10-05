@@ -1,4 +1,4 @@
-using Application.Abstractions.Repositories;
+﻿using Application.Abstractions.Repositories;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ public class UserInteractionRepository(CinemaDbContext context) : IUserInteracti
 
     public async Task AddAsync(UserInteraction interaction, CancellationToken cancellationToken = default)
     {
-        await _context.UserInteractions.AddAsync(interaction, cancellationToken);
+        _context.UserInteractions.Add(interaction);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -31,3 +31,5 @@ public class UserInteractionRepository(CinemaDbContext context) : IUserInteracti
             .ToListAsync(cancellationToken);
     }
 }
+
+

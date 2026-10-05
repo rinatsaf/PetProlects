@@ -1,5 +1,6 @@
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Services;
+using Infrastructure.Options;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Payments;
@@ -29,6 +30,18 @@ public static class DependencyInjection
                 "YooKassa credentials are not configured.")
             .ValidateOnStart();
 
+        services.AddOptions<SmtpOptions>()
+            .Bind(configuration.GetSection(SmtpOptions.SectionName));
+
+        services.AddOptions<ActiveCacheOptions>()
+            .BindConfiguration(ActiveCacheOptions.SectionName);
+        services.AddOptions<OrderCleanupOptions>()
+            .BindConfiguration(OrderCleanupOptions.SectionName);
+        services.AddOptions<PreferenceCleanupOptions>()
+            .BindConfiguration(PreferenceCleanupOptions.SectionName);
+        services.AddOptions<SeatHoldOptions>()
+            .BindConfiguration(SeatHoldOptions.SectionName);
+
         services.AddHttpClient<IYooKassaPaymentGateway, YooKassaPaymentGateway>(client =>
         {
             client.BaseAddress = new Uri("https://api.yookassa.ru/v3/");
@@ -46,8 +59,12 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserInteractionRepository, UserInteractionRepository>();
         services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>();
+        services.AddScoped<ITransactionManager, TransactionManager>();
         services.AddScoped<ISeatHoldService, SeatHoldService>();
         services.AddScoped<IOrderCleanupService, OrderCleanupService>();
+        services.AddScoped<IPreferenceCleanupService, PreferenceCleanupService>();
+        services.AddScoped<ITicketEmailService, TicketEmailService>();
+        services.AddScoped<IMovieReviewRepository, MovieReviewRepository>();
 
         services.AddSecurity();
     }

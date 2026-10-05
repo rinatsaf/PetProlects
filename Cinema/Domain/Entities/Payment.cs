@@ -5,6 +5,7 @@ namespace Domain.Entities;
 
 public sealed class Payment : BaseEntity
 {
+    public long CreatedByUserId { get; set; }
     public long OrderId { get; set; }
     public required Order Order { get; set; } 
     

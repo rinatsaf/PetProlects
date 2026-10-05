@@ -16,8 +16,14 @@ public class HallConfiguration : IEntityTypeConfiguration<Hall>
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(x => x.Address)
+            .IsRequired()
+            .HasMaxLength(300);
+
         builder.Property(x => x.Type)
             .IsRequired()
             .HasMaxLength(50);
+
+        builder.HasIndex(x => x.CreatedByUserId);
     }
 }

@@ -6,6 +6,7 @@ using Application.Exceptions;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
+using Serilog;
 
 namespace Application.Services;
 
@@ -13,34 +14,42 @@ public class PaymentService(
     IPaymentRepository paymentRepository,
     IOrderRepository orderRepository,
     ITicketRepository ticketRepository,
+    ITransactionManager transactionManager,
     IYooKassaPaymentGateway yooKassaPaymentGateway,
+    ITicketEmailService ticketEmailService,
     ICurrentUserService currentUserService,
     IMapper mapper) : IPaymentService
 {
-    private readonly IPaymentRepository _paymentRepository = paymentRepository;
-    private readonly IOrderRepository _orderRepository = orderRepository;
-    private readonly ITicketRepository _ticketRepository = ticketRepository;
-    private readonly IYooKassaPaymentGateway _yooKassaPaymentGateway = yooKassaPaymentGateway;
-    private readonly ICurrentUserService _currentUserService = currentUserService;
-    private readonly IMapper _mapper = mapper;
+    private static readonly ILogger BusinessLogger = Log.ForContext("BusinessLog", true);
 
     public async Task<PaymentDto> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
-        var payment = await _paymentRepository.GetByIdAsync(id, cancellationToken)
+        var user = currentUserService.GetCurrentUser();
+        var payment = await paymentRepository.GetByIdAsync(id, user, cancellationToken)
                       ?? throw new NotFoundException($"Payment {id} not found");
-        return _mapper.Map<PaymentDto>(payment);
+        return mapper.Map<PaymentDto>(payment);
+    }
+
+    public async Task<IReadOnlyList<PaymentDto>> GetAccessibleAsync(CancellationToken cancellationToken = default)
+    {
+        var user = currentUserService.GetCurrentUser();
+        var payments = await paymentRepository.GetAccessibleAsync(user, cancellationToken);
+        return mapper.Map<IReadOnlyList<PaymentDto>>(payments);
     }
 
     public async Task<PaymentDto> GetByExternalIdAsync(string externalId, CancellationToken cancellationToken = default)
     {
-        var payment = await _paymentRepository.GetByExternalIdAsync(externalId, cancellationToken)
+        var user = currentUserService.GetCurrentUser();
+        var payment = await paymentRepository.GetByExternalIdAsync(externalId, user, cancellationToken)
                       ?? throw new NotFoundException($"Payment with external id {externalId} not found");
-        return _mapper.Map<PaymentDto>(payment);
+        return mapper.Map<PaymentDto>(payment);
     }
 
     public async Task<PaymentDto> CreateAsync(CreatePaymentRequest request, CancellationToken cancellationToken = default)
     {
-        var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken)
+        var user = currentUserService.GetCurrentUser();
+        
+        var order = await orderRepository.GetByIdAsync(request.OrderId, user, cancellationToken)
                     ?? throw new NotFoundException($"Order {request.OrderId} not found");
 
         EnsureCurrentUserCanAccess(order);
@@ -49,12 +58,13 @@ public class PaymentService(
         var existingPendingPayment = order.Payments
             .OrderByDescending(x => x.CreatedAt)
             .FirstOrDefault(x => x.Status == PaymentStatus.Pending && !string.IsNullOrWhiteSpace(x.ConfirmationUrl));
+        
         if (existingPendingPayment is not null)
         {
-            return _mapper.Map<PaymentDto>(existingPendingPayment);
+            return mapper.Map<PaymentDto>(existingPendingPayment);
         }
 
-        var gatewayResult = await _yooKassaPaymentGateway.CreatePaymentAsync(
+        var gatewayResult = await yooKassaPaymentGateway.CreatePaymentAsync(
             order.Id,
             order.TotalAmount,
             "RUB",
@@ -72,27 +82,36 @@ public class PaymentService(
             Currency = "RUB",
             Status = gatewayResult.Status,
             PaymentMethod = gatewayResult.PaymentMethod,
+            CreatedByUserId = user.UserId,
             ConfirmationUrl = gatewayResult.ConfirmationUrl,
             RawPayload = gatewayResult.RawPayload,
             CreatedAt = now,
             UpdatedAt = now
         };
 
-        var created = await _paymentRepository.AddAsync(payment, cancellationToken);
+        var created = await paymentRepository.AddAsync(payment, cancellationToken);
 
         if (order.Status == OrderStatus.Pending)
         {
             order.Status = OrderStatus.AwaitingPayment;
             order.UpdatedAt = now;
-            await _orderRepository.UpdateAsync(order, cancellationToken);
+            await orderRepository.UpdateAsync(order, cancellationToken);
         }
 
-        return _mapper.Map<PaymentDto>(created);
+        BusinessLogger.Information(
+            "Payment created: PaymentId={PaymentId}, OrderId={OrderId}, ExternalId={ExternalId}, Amount={Amount}, Status={Status}",
+            created.Id,
+            created.OrderId,
+            created.ExternalPaymentId,
+            created.Amount,
+            created.Status);
+
+        return mapper.Map<PaymentDto>(created);
     }
 
     public async Task<PaymentDto> UpdateStatusAsync(long id, PaymentStatusUpdateRequest request, CancellationToken cancellationToken = default)
     {
-        var payment = await _paymentRepository.GetByIdAsync(id, cancellationToken)
+        var payment = await paymentRepository.GetByIdAsync(id, GetRepositoryAccessUser(), cancellationToken)
                       ?? throw new NotFoundException($"Payment {id} not found");
 
         return await ApplyPaymentStateAsync(
@@ -114,16 +133,92 @@ public class PaymentService(
             throw new ValidationException("YooKassa webhook does not contain payment id.");
         }
 
-        var payment = await _paymentRepository.GetByExternalIdAsync(externalId, cancellationToken)
+        var payment = await paymentRepository.GetByExternalIdUnsafeAsync(externalId, cancellationToken)
                       ?? throw new NotFoundException($"Payment with external id {externalId} not found");
 
-        var mappedStatus = MapProviderStatus(request.Payment!.Status, request.Event);
+        var webhookStatus = MapProviderStatus(request.Payment!.Status, request.Event);
+
+        Log.Information(
+            "YooKassa webhook received: ExternalId={ExternalId}, RawStatus={RawStatus}, Event={Event}, MappedStatus={MappedStatus}",
+            externalId, request.Payment.Status, request.Event, webhookStatus);
+
+        var realStatus = await yooKassaPaymentGateway.GetPaymentStatusAsync(externalId, cancellationToken);
+
+        if (realStatus != webhookStatus)
+        {
+            BusinessLogger.Warning(
+                "YooKassa webhook status mismatch — skipping: ExternalId={ExternalId}, " +
+                "WebhookStatus={WebhookStatus}, ApiStatus={ApiStatus}",
+                externalId, webhookStatus, realStatus);
+
+            return mapper.Map<PaymentDto>(payment);
+        }
+
+        var verifiedUser = new CurrentUserInfo
+        {
+            IsAuthenticated = true,
+            Role = UserRole.Admin
+        };
+
         return await ApplyPaymentStateAsync(
             payment,
-            mappedStatus,
+            realStatus,
             request.Payment.Confirmation?.ConfirmationUrl,
             rawPayload,
-            cancellationToken);
+            cancellationToken,
+            verifiedUser);
+    }
+
+    public async Task<int> SynchronizePendingPaymentsAsync(CancellationToken cancellationToken = default)
+    {
+        var pendingPayments = await paymentRepository.GetPendingAsync(cancellationToken);
+        var syncedCount = 0;
+
+        foreach (var payment in pendingPayments)
+        {
+            try
+            {
+                var realStatus = await yooKassaPaymentGateway.GetPaymentStatusAsync(
+                    payment.ExternalPaymentId, cancellationToken);
+
+                if (realStatus == payment.Status)
+                    continue;
+
+                payment.RawPayload = $"{{\"synchronizedAt\":\"{DateTimeOffset.UtcNow:O}\"}}";
+                payment.UpdatedAt = DateTimeOffset.UtcNow;
+
+                var verifiedUser = new CurrentUserInfo
+                {
+                    IsAuthenticated = true,
+                    Role = UserRole.Admin
+                };
+
+                await ApplyPaymentStateAsync(
+                    payment,
+                    realStatus,
+                    null,
+                    payment.RawPayload,
+                    cancellationToken,
+                    verifiedUser);
+
+                syncedCount++;
+            }
+            catch (Exception ex)
+            {
+                BusinessLogger.Error(ex,
+                    "Failed to synchronize payment: ExternalId={ExternalId}",
+                    payment.ExternalPaymentId);
+            }
+        }
+
+        if (syncedCount > 0)
+        {
+            BusinessLogger.Information(
+                "Payment synchronization completed: Synced={SyncedCount}, Pending={PendingCount}",
+                syncedCount, pendingPayments.Count);
+        }
+
+        return syncedCount;
     }
 
     private async Task<PaymentDto> ApplyPaymentStateAsync(
@@ -131,11 +226,12 @@ public class PaymentService(
         PaymentStatus newStatus,
         string? confirmationUrl,
         string? rawPayload,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        CurrentUserInfo? overrideUser = null)
     {
         if (payment.Status == PaymentStatus.Succeeded && newStatus != PaymentStatus.Succeeded)
         {
-            return _mapper.Map<PaymentDto>(payment);
+            return mapper.Map<PaymentDto>(payment);
         }
 
         var now = DateTimeOffset.UtcNow;
@@ -149,50 +245,81 @@ public class PaymentService(
             payment.ConfirmedAt = now;
         }
 
-        var updatedPayment = await _paymentRepository.UpdateAsync(payment, cancellationToken);
-        var order = await _orderRepository.GetByIdAsync(payment.OrderId, cancellationToken)
-                    ?? throw new NotFoundException($"Order {payment.OrderId} not found");
+        Order? orderToEmail = null;
+        Payment? updatedPayment = null;
 
-        if (newStatus == PaymentStatus.Succeeded)
+        await transactionManager.ExecuteAsync(async ct =>
         {
-            if (order.Status != OrderStatus.Paid)
-            {
-                order.Status = OrderStatus.Paid;
-                order.PaidAt = order.PaidAt ?? now;
-                order.UpdatedAt = now;
-            }
+            updatedPayment = await paymentRepository.UpdateAsync(payment, ct);
 
-            foreach (var ticket in order.Tickets.Where(x => x.Status == TicketStatus.Reserved))
-            {
-                ticket.Status = TicketStatus.Active;
-                ticket.UpdatedAt = now;
-            }
+            var orderUser = overrideUser ?? GetRepositoryAccessUser();
+            var order = await orderRepository.GetByIdAsync(payment.OrderId, orderUser, ct)
+                        ?? throw new NotFoundException($"Order {payment.OrderId} not found");
 
-            await _orderRepository.UpdateAsync(order, cancellationToken);
-        }
-        else if (newStatus is PaymentStatus.Cancelled or PaymentStatus.Failed)
+            if (newStatus == PaymentStatus.Succeeded)
+            {
+                if (order.Status != OrderStatus.Paid)
+                {
+                    order.Status = OrderStatus.Paid;
+                    order.PaidAt = order.PaidAt ?? now;
+                    order.UpdatedAt = now;
+                }
+
+                foreach (var ticket in order.Tickets.Where(x => x.Status == TicketStatus.Reserved))
+                {
+                    ticket.Status = TicketStatus.Active;
+                    ticket.UpdatedAt = now;
+                }
+
+                await ticketRepository.UpdateRangeAsync(order.Tickets, ct);
+                await orderRepository.UpdateAsync(order, ct);
+                orderToEmail = order;
+            }
+            else if (newStatus is PaymentStatus.Cancelled or PaymentStatus.Failed)
+            {
+                if (order.Status != OrderStatus.Cancelled)
+                {
+                    order.Status = OrderStatus.Cancelled;
+                    order.UpdatedAt = now;
+                }
+
+                if (order.Tickets.Count > 0)
+                {
+                    ReleaseTickets(order.Tickets, now);
+                    await ticketRepository.UpdateRangeAsync(order.Tickets, ct);
+                }
+
+                await orderRepository.UpdateAsync(order, ct);
+            }
+        }, cancellationToken);
+
+        if (orderToEmail is not null)
         {
-            if (order.Status != OrderStatus.Cancelled)
+            try
             {
-                order.Status = OrderStatus.Cancelled;
-                order.UpdatedAt = now;
+                await ticketEmailService.SendTicketsAsync(orderToEmail, cancellationToken);
             }
-
-            if (order.Tickets.Count > 0)
+            catch (Exception ex)
             {
-                await _ticketRepository.DeleteRangeAsync(order.Tickets, cancellationToken);
-                order.Tickets.Clear();
+                BusinessLogger.Error(
+                    ex,
+                    "Failed to send tickets email for order {OrderId}. Payment state is already committed.",
+                    orderToEmail.Id);
             }
-
-            await _orderRepository.UpdateAsync(order, cancellationToken);
         }
 
-        return _mapper.Map<PaymentDto>(updatedPayment);
+        BusinessLogger.Information(
+            "Payment status applied: PaymentId={PaymentId}, OrderId={OrderId}, NewStatus={NewStatus}",
+            payment.Id,
+            payment.OrderId,
+            newStatus);
+
+        return mapper.Map<PaymentDto>(updatedPayment!);
     }
 
     private void EnsureCurrentUserCanAccess(Order order)
     {
-        var currentUser = _currentUserService.GetCurrentUser();
+        var currentUser = currentUserService.GetCurrentUser();
         if (!currentUser.IsAuthenticated || currentUser.IsAdmin || currentUser.IsCashier)
         {
             return;
@@ -230,5 +357,32 @@ public class PaymentService(
             "waiting_for_capture" => PaymentStatus.Pending,
             _ => PaymentStatus.Failed
         };
+    }
+
+    private CurrentUserInfo GetRepositoryAccessUser()
+    {
+        var currentUser = currentUserService.GetCurrentUser();
+        if (currentUser.IsAuthenticated)
+        {
+            return currentUser;
+        }
+
+        return new CurrentUserInfo
+        {
+            IsAuthenticated = true,
+            Role = UserRole.Admin
+        };
+    }
+
+    private static void ReleaseTickets(IEnumerable<Ticket> tickets, DateTimeOffset now)
+    {
+        foreach (var ticket in tickets)
+        {
+            ticket.OrderId = null;
+            ticket.Order = null;
+            ticket.Status = TicketStatus.Available;
+            ticket.QrCodeUrl = null;
+            ticket.UpdatedAt = now;
+        }
     }
 }

@@ -19,4 +19,5 @@ public sealed class Movie : BaseEntity
     public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     public ICollection<Session> Sessions { get; set; } = new List<Session>();
     public ICollection<UserInteraction> Interactions { get; set; } = new List<UserInteraction>();
+    public ICollection<MovieReview> Reviews { get; set; } = new List<MovieReview>();
 }

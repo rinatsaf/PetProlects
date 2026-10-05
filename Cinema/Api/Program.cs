@@ -1,13 +1,16 @@
-using Api.HostedServices;
-using Api.Middlewares;
+using Api.Extensions;
+using Api.Hangfire;
 using Application;
-using Application.Abstractions.Security;
+using Hangfire;
 using Infrastructure;
-using Infrastructure.Security;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
+using Serilog.Filters;
+using System.Net;
+using System.Threading.RateLimiting;
+using Api.Middlewares;
+using Microsoft.AspNetCore.RateLimiting;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -19,97 +22,87 @@ Log.Logger = new LoggerConfiguration()
         retainedFileCountLimit: 7,
         shared: true,
         flushToDiskInterval: TimeSpan.FromSeconds(1))
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(Matching.WithProperty("BusinessLog"))
+        .WriteTo.File(
+            path: "logs/business-.txt",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 14,
+            shared: true,
+            flushToDiskInterval: TimeSpan.FromSeconds(1)))
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-//ак как мы запускаем локально это не особо важно
-// (но для прода было бы критично важно)
-// Используем для защиты от Brute Force 
-if (!builder.Environment.IsDevelopment())
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    builder.Services.Configure<ForwardedHeadersOptions>(options =>
-    {
-        options.ForwardedHeaders =
-            ForwardedHeaders.XForwardedFor |
-            ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
 
-        // Указывать только реальный IP доверенного прокси
-        // options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
-    });
-}
+    // Local reverse-proxy
+    options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+    // Docker bridge networks
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("172.16.0.0"), 12));
+    options.ForwardLimit = 1;
+});
+
+builder.Services.AddCinemaHangfire(builder.Configuration);
 
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = 429;
+    
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+});
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/api/auth/login";
-        options.LogoutPath = "/api/auth/logout";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = SameSiteMode.Lax;
-        #if DEBUG
-        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-        #else
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        #endif
-        options.Events.OnRedirectToLogin = ctx =>
-        {
-            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        };
-        options.Events.OnRedirectToAccessDenied = ctx =>
-        {
-            ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return Task.CompletedTask;
-        };
-    });
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Customer", policy => policy.RequireRole("Customer","Cashier", "Admin"));
-    options.AddPolicy("Staff", policy => policy.RequireRole("Cashier", "Admin"));
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-});
+builder.Services
+    .AddApiDocumentation()
+    .AddApiAuthentication();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddHostedService<ExpiredOrdersCleanupHostedService>();
-
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 if (!app.Environment.IsDevelopment())
 {
-    app.UseForwardedHeaders();
+    app.UseExceptionHandler("/error-development");
+    app.UseHsts();
+}
+else
+{
+    app.UseMiddleware<ExceptionHandlingMiddleware>("/error");
 }
 
-app.UseSerilogRequestLogging(options =>
+app.UseForwardedHeaders();
+app.UseHttpsRedirection();
+app.UseApiPipeline();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} => {StatusCode} in {Elapsed:0.0000} ms";
-    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-    {
-        diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
-        diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
-        diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].ToString());
-        diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress?.ToString());
-    };
+    Authorization = [new AdminOnlyDashboardAuthorizationFilter()]
 });
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var recurringJobs = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+    RecurringJobsRegistrar.Register(recurringJobs);
+}
 
 app.Run();

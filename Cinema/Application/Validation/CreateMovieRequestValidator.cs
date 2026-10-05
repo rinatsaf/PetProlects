@@ -34,5 +34,12 @@ public sealed class CreateMovieRequestValidator : AbstractValidator<CreateMovieR
             .WithMessage("ReleaseDate must be provided and after 1900-01-01")
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("ReleaseDate cannot be in the future");
+
+        RuleFor(x => x.GenreIds)
+            .NotNull()
+            .Must(x => x.Any())
+            .WithMessage("At least one genre id is required.")
+            .Must(x => x.Distinct().Count() == x.Count())
+            .WithMessage("Genre ids must be unique.");
     }
 }

@@ -11,4 +11,5 @@ public class UpdateMovieRequest
     public string? PosterUrl { get; set; }
     public decimal PopularityScore { get; set; }
     public bool IsActive { get; set; }
+    public IEnumerable<long>? GenreIds { get; set; }
 }

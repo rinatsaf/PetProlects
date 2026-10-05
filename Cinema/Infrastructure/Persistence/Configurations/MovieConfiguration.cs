@@ -11,7 +11,7 @@ public class MovieConfiguration : IEntityTypeConfiguration<Movie>
         builder.ToTable("movies");
 
         builder.HasKey(x => x.Id);
-
+        
         builder.Property(x => x.Title)
             .IsRequired()
             .HasMaxLength(200);

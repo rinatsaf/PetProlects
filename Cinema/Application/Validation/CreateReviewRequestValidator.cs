@@ -1,0 +1,18 @@
+using Application.DTOs.MovieReview;
+using FluentValidation;
+
+namespace Application.Validation;
+
+public sealed class CreateReviewRequestValidator : AbstractValidator<CreateReviewRequest>
+{
+    public CreateReviewRequestValidator()
+    {
+        RuleFor(x => x.Rating)
+            .InclusiveBetween(1, 5)
+            .WithMessage("Rating must be between 1 and 5.");
+
+        RuleFor(x => x.Comment)
+            .MaximumLength(2000)
+            .WithMessage("Comment must not exceed 2000 characters.");
+    }
+}

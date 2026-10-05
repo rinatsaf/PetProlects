@@ -2,6 +2,7 @@
 
 public enum TicketStatus
 {
+    Available = 0,
     Reserved = 1,
     Active = 2,
     Used = 3,

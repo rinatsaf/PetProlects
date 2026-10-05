@@ -34,6 +34,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(x => x.Status)
             .IsRequired();
 
+        builder.HasIndex(x => x.CreatedByUserId);
         builder.HasIndex(x => new { x.OrderId, x.Status });
 
         builder.HasOne(x => x.Order)
